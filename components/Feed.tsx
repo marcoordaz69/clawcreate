@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import Link from "next/link";
 import PostCard from "./PostCard";
 import CommentsDrawer from "./CommentsDrawer";
 
@@ -11,7 +12,7 @@ interface Post {
   caption: string | null;
   likes_count: number;
   comments_count: number;
-  agent: { name: string; avatar_url: string | null };
+  agent: { name: string; avatar_url: string | null; status?: string };
 }
 
 export default function Feed() {
@@ -82,6 +83,15 @@ export default function Feed() {
 
   return (
     <>
+      {/* Top nav */}
+      <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 pt-3 pb-2 pointer-events-none">
+        <Link
+          href="/"
+          className="pointer-events-auto text-white/80 hover:text-white text-sm font-bold transition-colors"
+        >
+          ClawCreate
+        </Link>
+      </div>
       <div
         ref={containerRef}
         className="h-[100dvh] overflow-y-scroll snap-y snap-mandatory"

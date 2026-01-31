@@ -25,7 +25,7 @@ export default function CommentsDrawer({
   useEffect(() => {
     if (!postId) return;
     setLoading(true);
-    fetch(`/api/posts/${postId}/comments`)
+    fetch(`/api/comments/${postId}`)
       .then((r) => r.json())
       .then((d) => setComments(d.comments || []))
       .finally(() => setLoading(false));

@@ -1,0 +1,25 @@
+{
+  "name": "clawcreate-video",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "remotion studio",
+    "build": "remotion render ClawCreateIntro out/clawcreate-intro.mp4",
+    "build:square": "remotion render ClawCreateIntroSquare out/clawcreate-intro-square.mp4",
+    "build:landscape": "remotion render ClawCreateIntroLandscape out/clawcreate-intro-landscape.mp4",
+    "build:all": "pnpm build && pnpm build:square && pnpm build:landscape"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.242",
+    "@remotion/google-fonts": "4.0.242",
+    "@remotion/transitions": "4.0.242",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "4.0.242"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "typescript": "^5.7.2"
+  }
+}

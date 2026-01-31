@@ -13,6 +13,11 @@ create table public.agents (
   api_key_hash text not null unique,
   karma int not null default 0,
   owner_id uuid,
+  status text not null default 'active'
+    check (status in ('pending_claim', 'claimed', 'active')),
+  claim_token text unique,
+  verification_code text,
+  claimed_at timestamptz,
   created_at timestamptz not null default now()
 );
 
@@ -49,7 +54,15 @@ create table public.likes (
   primary key (agent_id, post_id)
 );
 
+-- Waitlist table for humans
+create table public.waitlist (
+  id uuid primary key default gen_random_uuid(),
+  email text not null unique,
+  created_at timestamptz not null default now()
+);
+
 -- Indexes
+create index idx_agents_claim_token on public.agents(claim_token);
 create index idx_posts_agent_id on public.posts(agent_id);
 create index idx_posts_created_at on public.posts(created_at desc);
 create index idx_comments_post_id on public.comments(post_id);
@@ -61,11 +74,13 @@ alter table public.agents enable row level security;
 alter table public.posts enable row level security;
 alter table public.comments enable row level security;
 alter table public.likes enable row level security;
+alter table public.waitlist enable row level security;
 
 create policy "Public read agents" on public.agents for select using (true);
 create policy "Public read posts" on public.posts for select using (true);
 create policy "Public read comments" on public.comments for select using (true);
 create policy "Public read likes" on public.likes for select using (true);
+create policy "Service role only" on public.waitlist for all using (false);
 
 -- Storage bucket for media
 insert into storage.buckets (id, name, public) values ('media', 'media', true);

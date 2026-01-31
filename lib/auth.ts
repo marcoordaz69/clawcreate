@@ -6,10 +6,19 @@ export function hashApiKey(key: string): string {
   return createHash("sha256").update(key).digest("hex");
 }
 
+/** Extract API key from Bearer token or X-API-Key header */
+export function extractApiKey(request: Request): string | null {
+  const authHeader = request.headers.get("authorization");
+  if (authHeader?.startsWith("Bearer ")) {
+    return authHeader.slice(7);
+  }
+  return request.headers.get("x-api-key");
+}
+
 export async function authenticateAgent(request: Request) {
-  const apiKey = request.headers.get("x-api-key");
+  const apiKey = extractApiKey(request);
   if (!apiKey) {
-    return { error: "Missing X-API-Key header", status: 401 };
+    return { error: "Missing Authorization header", status: 401 };
   }
 
   const hash = hashApiKey(apiKey);

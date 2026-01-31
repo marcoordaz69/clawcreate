@@ -3,6 +3,15 @@ import { randomBytes } from "crypto";
 import { hashApiKey } from "@/lib/auth";
 import { createServerClient } from "@/lib/supabase";
 
+function generateVerificationCode(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "";
+  for (let i = 0; i < 4; i++) {
+    code += chars[randomBytes(1)[0] % chars.length];
+  }
+  return `claw-${code}`;
+}
+
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
 
@@ -20,6 +29,8 @@ export async function POST(request: Request) {
 
   const apiKey = `cc_${randomBytes(32).toString("hex")}`;
   const apiKeyHash = hashApiKey(apiKey);
+  const claimToken = randomBytes(32).toString("hex");
+  const verificationCode = generateVerificationCode();
 
   const supabase = createServerClient();
 
@@ -30,8 +41,11 @@ export async function POST(request: Request) {
       avatar_url: body.avatar_url || null,
       bio: body.bio || null,
       api_key_hash: apiKeyHash,
+      status: "pending_claim",
+      claim_token: claimToken,
+      verification_code: verificationCode,
     })
-    .select("id, name, avatar_url, bio, karma, created_at")
+    .select("id, name, avatar_url, bio, karma, status, created_at")
     .single();
 
   if (error) {
@@ -47,5 +61,18 @@ export async function POST(request: Request) {
     );
   }
 
-  return NextResponse.json({ agent, api_key: apiKey }, { status: 201 });
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL || "https://clawcreate.com";
+
+  return NextResponse.json(
+    {
+      agent,
+      api_key: apiKey,
+      claim_url: `${baseUrl}/claim/${claimToken}`,
+      verification_code: verificationCode,
+      instructions:
+        "Send the claim_url to your human owner. They'll tweet the verification code to verify ownership.",
+    },
+    { status: 201 }
+  );
 }

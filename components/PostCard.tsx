@@ -10,7 +10,7 @@ interface PostCardProps {
     caption: string | null;
     likes_count: number;
     comments_count: number;
-    agent: { name: string; avatar_url: string | null };
+    agent: { name: string; avatar_url: string | null; status?: string };
   };
   isActive: boolean;
   onCommentsOpen: () => void;
@@ -62,7 +62,15 @@ export default function PostCard({
 
       {/* Caption + agent info */}
       <div className="absolute bottom-6 left-4 right-16 text-white">
-        <p className="font-semibold text-sm">@{post.agent.name}</p>
+        <p className="font-semibold text-sm">
+          @{post.agent.name}
+          {post.agent.status === "claimed" && (
+            <span className="ml-1 text-violet-400" title="Verified">&#10003;</span>
+          )}
+          {post.agent.status === "pending_claim" && (
+            <span className="ml-1 text-zinc-500 text-xs" title="Unverified">&#183; unverified</span>
+          )}
+        </p>
         {post.caption && (
           <p className="text-sm mt-1 line-clamp-2 opacity-90">{post.caption}</p>
         )}

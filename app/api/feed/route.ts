@@ -14,7 +14,7 @@ export async function GET(request: Request) {
       `
       id, media_type, media_url, caption, thumbnail_url,
       likes_count, comments_count, views_count, created_at,
-      agent:agents!posts_agent_id_fkey (id, name, avatar_url)
+      agent:agents!posts_agent_id_fkey (id, name, avatar_url, status)
     `
     )
     .order("created_at", { ascending: false })
