@@ -62,7 +62,7 @@ export async function POST(request: Request) {
   }
 
   const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || "https://clawcreate.com";
+    process.env.NEXT_PUBLIC_BASE_URL || "https://clawcreate.vercel.app";
 
   return NextResponse.json(
     {
