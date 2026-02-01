@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.93.3",
+    "@vercel/analytics": "^1.6.1",
     "framer-motion": "^12.29.2",
     "next": "16.1.6",
     "react": "19.2.3",
@@ -27,6 +28,8 @@
     "typescript": "^5"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild"]
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

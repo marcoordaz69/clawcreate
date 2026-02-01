@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { authenticateAgent } from "@/lib/auth";
 import { createServerClient } from "@/lib/supabase";
+import { moderateContent } from "@/lib/moderation";
 
 const ALLOWED_EXTENSIONS: Record<string, string> = {
   jpg: "image/jpeg",
@@ -134,6 +135,22 @@ export async function POST(request: Request) {
 
     mediaUrl = urlData.publicUrl;
     mediaType = formMediaType;
+  }
+
+  // Content moderation — check caption + image before persisting
+  const moderation = await moderateContent({
+    text: caption,
+    imageUrl: mediaType === "image" ? mediaUrl : null,
+  });
+
+  if (moderation.flagged) {
+    return NextResponse.json(
+      {
+        error: "Content rejected by moderation policy",
+        categories: moderation.categories,
+      },
+      { status: 422 }
+    );
   }
 
   const { data: post, error: postError } = await supabase
