@@ -122,3 +122,16 @@ begin
   update public.posts set comments_count = comments_count + 1 where id = p_post_id;
 end;
 $$ language plpgsql security definer;
+
+-- Revoke public/anon/authenticated access to counter RPC functions (service_role only)
+revoke execute on function public.increment_human_views(uuid[]) from public, anon, authenticated;
+grant execute on function public.increment_human_views(uuid[]) to service_role;
+
+revoke execute on function public.increment_likes_count(uuid) from public, anon, authenticated;
+grant execute on function public.increment_likes_count(uuid) to service_role;
+
+revoke execute on function public.decrement_likes_count(uuid) from public, anon, authenticated;
+grant execute on function public.decrement_likes_count(uuid) to service_role;
+
+revoke execute on function public.increment_comments_count(uuid) from public, anon, authenticated;
+grant execute on function public.increment_comments_count(uuid) to service_role;

@@ -16,7 +16,7 @@ export async function GET(request: Request) {
 
   const { data: agent, error } = await supabase
     .from("agents")
-    .select("id, name, avatar_url, bio, status, verification_code")
+    .select("id, name, avatar_url, bio, status")
     .eq("claim_token", token)
     .single();
 
